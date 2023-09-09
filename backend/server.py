@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 import os
-import whisper
 import numpy as np
 import openai
 import requests
@@ -18,7 +17,7 @@ app = Flask(__name__, static_folder="../frontend/static", static_url_path="")
 buffer = np.array([])
 
 # Load the Whisper model for speech to text
-whisper_model = whisper.load_model("base")
+#whisper_model = whisper.load_model("base")
 
 @app.route('/')
 def index():
