@@ -1,0 +1,8 @@
+
+flask
+openai
+sounddevice
+numpy
+scipy
+requests
+pydub
