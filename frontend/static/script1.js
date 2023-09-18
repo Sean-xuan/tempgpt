@@ -43,7 +43,6 @@ navigator.mediaDevices.getUserMedia({ audio: true })
             const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
             console.log("Size of the audio blob:", audioBlob.size);
             sendAudioToBackend(audioBlob);
-            recordedChunks = [];  // Clear the recorded chunks for the next recording
         };
     })
     .catch(err => {
@@ -64,6 +63,8 @@ document.getElementById('stopRecording').addEventListener('click', function() {
     }
 });
 
+
+
 function sendAudioToBackend(audioBlob) {
     const formData = new FormData();
     formData.append('audio', audioBlob, 'audio.wav');
@@ -74,10 +75,15 @@ function sendAudioToBackend(audioBlob) {
     .then(response => response.json())
     .then(data => {
         const statusMessage = "Transcription: " + data.transcription + "\nResponse: " + data.response;
-        updateStatus(statusMessage);  // First update the status
+        updateStatus(statusMessage);
 
-        // Then play the returned audio and set the animation to active
+        // Play the returned audio and set the animation to active
         const responseAudio = new Audio(data.audio_url);
+
+        // Add this event listener to play audio when it's ready
+        responseAudio.addEventListener("canplaythrough", function() {
+            responseAudio.play();
+        });
         
         responseAudio.onplay = function() {
             setAnimation(true);  // Start the active animation when the audio starts playing
@@ -87,14 +93,14 @@ function sendAudioToBackend(audioBlob) {
             setAnimation(false);  // Reset to static animation after audio is finished
         };
         
-        // Load and play the audio data
+        // Load the audio data
         responseAudio.load();
-        responseAudio.play();
     })
     .catch(error => {
         console.error('Error sending audio data:', error);
     });
 }
+
 
 function updateStatus(message) {
     document.getElementById('statusWindow').innerText = message;

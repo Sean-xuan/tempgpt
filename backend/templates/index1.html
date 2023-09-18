@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ChatGPT Chatbot</title>
+<style>
+        #animation {
+            width: 300px;
+            height: 300px;
+            background-image: url('assets/girl-46.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+<div id="animation"></div>
+<button onclick="startRecording()">Start Recording</button><button onclick="stopRecording()">Stop Recording</button>
+<script>
+        let isRecording = false;
+        let recordedChunks = [];
+        let mediaRecorder;
+        let animationInterval;
+
+        const animationFramesActive = ['assets/girl-30.jpg', 'assets/girl-31.jpg', 'assets/girl-32.jpg', 'assets/girl-33.jpg'];
+        const animationFramesStatic = ['assets/girl-46.jpg', 'assets/girl-47.jpg', 'assets/girl-48.jpg', 'assets/girl-51.jpg'];
+
+        function startRecording() {
+            if (!isRecording) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = event => {
+                        recordedChunks.push(event.data);
+                    };
+                    mediaRecorder.onstop = sendAudioToServer;
+                    mediaRecorder.start();
+                });
+                isRecording = true;
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+            }
+        }
+
+        function sendAudioToServer() {
+            const audioBlob = new Blob(recordedChunks, { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob);
+
+            fetch('/transcribe_and_respond', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json()).then(data => {
+                // Handle the received audio data and play it
+                const audioBuffer = new Uint8Array(data.audio_data.data);
+                const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' });
+                const audioURL = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioURL);
+                audio.play();
+
+                // Start active animation
+                startActiveAnimation(data.duration);
+            });
+        }
+
+        function startActiveAnimation(duration) {
+            let frameIndex = 0;
+            animationInterval = setInterval(() => {
+                document.getElementById('animation').style.backgroundImage = 'url(' + animationFramesActive[frameIndex] + ')';
+                frameIndex = (frameIndex + 1) % 4;
+            }, duration * 1000 / 4);
+
+            setTimeout(() => {
+                clearInterval(animationInterval);
+                startStaticAnimation();
+            }, duration * 1000);
+        }
+
+        function startStaticAnimation() {
+            let frameIndex = 0;
+            setInterval(() => {
+                document.getElementById('animation').style.backgroundImage = 'url(' + animationFramesStatic[frameIndex] + ')';
+                frameIndex = (frameIndex + 1) % 4;
+            }, 5000);
+        }
+
+        function playResponse() {
+            // This function can be used to play the chatbot's response if needed separately
+        }
+    </script>
+<div class="chatbot-img" id="chatbot-img">
+<img alt="Chatbot Image" class="chatbot-active" id="active-img" src="assets/girl-30.jpg"/>
+<img alt="Chatbot Image" class="chatbot-static" id="static-img" src="assets/girl-46.jpg"/>
+</div>
+<script>
+function stopRecording() {
+    if (isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        
+        // Convert recordedChunks to Blob and send to server
+        const audioBlob = new Blob(recordedChunks, {type: 'audio/wav'});
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+        
+        fetch('/transcribe_and_respond', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.arrayBuffer())
+        .then(data => {
+            // Play the received audio response and show active animation
+            const audioBuffer = new Uint8Array(data);
+            const audioBlob = new Blob([audioBuffer], {type: 'audio/mpeg'});
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            
+            // Set active animation
+            setAnimation(true);
+            
+            audio.play().then(() => {
+                // Set static animation after audio finishes playing
+                setAnimation(false);
+            });
+        });
+    }
+}
+
+function setAnimation(isActive) {
+    clearInterval(animationInterval);
+    let frameIndex = 0;
+    const frames = isActive ? animationFramesActive : animationFramesStatic;
+    
+    // Function to update animation frame
+    function updateAnimationFrame() {
+        const animationDiv = document.getElementById('animation');
+        animationDiv.style.backgroundImage = "url('" + frames[frameIndex] + "')";
+        frameIndex = (frameIndex + 1) % frames.length;
+    }
+    
+    // Update animation frame every 500ms
+    animationInterval = setInterval(updateAnimationFrame, 500);
+    updateAnimationFrame();  // Update the first frame immediately
+}
+</script><script>
+function updateStatus(message) {
+    const statusArea = document.getElementById('statusArea');
+    statusArea.textContent = message;
+}
+
+function startRecording() {
+    updateStatus("Recording started. Speak your message.");
+    // ... rest of the startRecording function logic ...
+}
+
+function stopRecording() {
+    updateStatus("Recording stopped. Processing...");
+    // ... rest of the stopRecording function logic ...
+}
+
+// Update the fetch callback to display transcribed text and GPT response
+fetch('/transcribe_and_respond', {
+    // ... existing fetch logic ...
+})
+.then(response => response.json())
+.then(data => {
+    updateStatus("Transcribed: " + data.transcription + " | GPT Response: " + data.response);
+    // ... rest of the fetch callback logic ...
+});
+</script></body>
+</html>

@@ -1,0 +1,32 @@
+#animation {
+    width: 400px;
+    height: 600px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+.chatbot-img {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    overflow: hidden;
+}
+
+.chatbot-active, .chatbot-static {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chatbot-static {
+    z-index: 1;
+}
+
+.chatbot-active {
+    z-index: 2;
+    opacity: 0;
+}
