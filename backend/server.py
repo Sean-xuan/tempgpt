@@ -8,6 +8,10 @@ import io
 from pydub import AudioSegment
 from pydub.playback import play
 import json
+from pydub import AudioSegment
+
+AudioSegment.converter = "/app/.apt/usr/bin/ffmpeg"
+AudioSegment.ffprobe   = "//app/.apt/usr/bin/ffprobe"
 
 openai.api_key = "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"
 
