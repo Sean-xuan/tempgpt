@@ -14,7 +14,7 @@ AudioSegment.converter = "/app/vendor/ffmpeg/ffmpeg"
 AudioSegment.ffprobe = "/app/vendor/ffmpeg/ffprobe"
 
 
-openai.api_key = "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"
+openai.api_key = ""
 
 # Initialize Flask app
 app = Flask(__name__, static_folder="../frontend/static", static_url_path="/")
