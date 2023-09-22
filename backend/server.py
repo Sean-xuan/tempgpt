@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 import os
-#import whisper
 import numpy as np
 import openai
 import requests
@@ -8,10 +7,10 @@ import io
 from pydub import AudioSegment
 from pydub.playback import play
 import json
-from pydub import AudioSegment
 
-AudioSegment.converter = "/app/vendor/ffmpeg/ffmpeg"
-AudioSegment.ffprobe = "/app/vendor/ffmpeg/ffprobe"
+
+#AudioSegment.converter = "/app/vendor/ffmpeg/ffmpeg"
+#AudioSegment.ffprobe = "/app/vendor/ffmpeg/ffprobe"
 
 
 openai.api_key = ""
