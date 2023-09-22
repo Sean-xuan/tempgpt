@@ -52,11 +52,13 @@ def transcribe_and_respond():
 
     EL_TTS(response_text,response_audio_filename)
 
+
     response_data = {
         'transcription': transcription,
         'response': response_text,
         'audio_url': '/'+response_audio_filename  # This URL can be used by the frontend to play the audio
     }
+    print(response_data)
     return jsonify(response_data)
 
 
@@ -120,7 +122,7 @@ def EL_TTS(message,response_audio_filename):
 
     audio_content = AudioSegment.from_file(io.BytesIO(response.content), format="mp3")
     # Save the audio content to a specified file
-    play(audio_content)
+    #play(audio_content)
 
     with open(response_audio_filename, 'wb') as f:
         f.write(audio_content.raw_data)
