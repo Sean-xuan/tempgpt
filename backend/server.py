@@ -13,7 +13,8 @@ import json
 #AudioSegment.ffprobe = "/app/vendor/ffmpeg/ffprobe"
 
 
-openai.api_key = ""
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Initialize Flask app
 app = Flask(__name__, static_folder="../frontend/static", static_url_path="/")
