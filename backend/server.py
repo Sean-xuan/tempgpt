@@ -48,7 +48,9 @@ def transcribe_and_respond():
     print(response_text)
 
     # Convert text response to audio and save it
-    response_audio_filename = os.path.join(app.static_folder, "response_audio.mp3")
+    #response_audio_filename = os.path.join(app.static_folder, "response_audio.mp3")
+    response_audio_filename = os.path.abspath(os.path.join(app.static_folder, "response_audio.mp3"))
+
 
     EL_TTS(response_text,response_audio_filename)
 
