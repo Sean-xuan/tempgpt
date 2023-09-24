@@ -73,6 +73,7 @@ function sendAudioToBackend(audioBlob) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Audio URL:', data.audio_url);
         const statusMessage = "Transcription: " + data.transcription + "\nResponse: " + data.response;
         updateStatus(statusMessage);  // First update the status
 
