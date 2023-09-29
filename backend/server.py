@@ -50,6 +50,8 @@ def transcribe_and_respond():
     # Convert text response to audio and save it
     #response_audio_filename = os.path.join(app.static_folder, "response_audio.mp3")
     response_audio_filename = os.path.abspath(os.path.join(app.static_folder, "response_audio.mp3"))
+    audio_url = 'https://aiheartbeat-7515af4eaeeb.herokuapp.com/static/response_audio.mp3'
+
 
 
     EL_TTS(response_text,response_audio_filename)
@@ -58,7 +60,7 @@ def transcribe_and_respond():
     response_data = {
         'transcription': transcription,
         'response': response_text,
-        'audio_url': '/'+response_audio_filename  # This URL can be used by the frontend to play the audio
+        'audio_url': audio_url # This URL can be used by the frontend to play the audio
     }
     print(response_data)
     return jsonify(response_data)
